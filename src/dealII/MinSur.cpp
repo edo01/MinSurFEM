@@ -334,6 +334,11 @@ MinSur::output() const
   // associated DoFHandler and a name.
   data_out.add_data_vector(dof_handler, solution, "solution");
 
+  // Add the function g to the output.
+  Vector<double> g_values(solution);
+  VectorTools::interpolate(dof_handler, function_g, g_values);
+  data_out.add_data_vector(dof_handler, g_values, "function_g");
+
   // Once all vectors have been inserted, call build_patches to finalize the
   // DataOut object, preparing it for writing to file.
   data_out.build_patches();

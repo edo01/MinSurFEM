@@ -60,7 +60,7 @@ public:
     virtual double
     value(const Point<dim> &p, const unsigned int /*component*/ = 0) const
     {
-      return 1.0;
+      return sin(2.0 * numbers::PI * p[0]);;
     }
   };
 
