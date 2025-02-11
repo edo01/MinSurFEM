@@ -35,12 +35,12 @@ endif()
 
 
 # Locate MPI compiler.
-#find_package(MPI REQUIRED)
-#set(CMAKE_CXX_COMPILER "${MPI_CXX_COMPILER}")
+find_package(MPI REQUIRED)
+set(CMAKE_CXX_COMPILER "${MPI_CXX_COMPILER}")
 
 ##########################
 # Include subdirectories #
 ##########################
-add_subdirectory(src/fastFEM)
-add_subdirectory(src/dealii)
+#add_subdirectory(src/fastFEM)
+add_subdirectory(src/dealII)
 add_subdirectory(src/main)

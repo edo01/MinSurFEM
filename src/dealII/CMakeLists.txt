@@ -16,7 +16,8 @@ deal_ii_initialize_cached_variables()
 
 
 # add sources to the library
-add_library(MinSurDealii ${SOURCES})
+add_library(MinSurDealII ${SOURCES})
+target_include_directories(MinSurDealII PRIVATE ${CMAKE_SOURCE_DIR}/include)
 
 # Link the library with deal.II
-deal_ii_setup_target(MinSurDealii)
+deal_ii_setup_target(MinSurDealII)

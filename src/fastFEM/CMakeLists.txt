@@ -9,6 +9,7 @@ find_package(OpenMP)
 
 # add sources to the library
 add_library(MinSurFastFEM ${SOURCES})
+target_include_directories(MinSurFastFEM PRIVATE ${CMAKE_SOURCE_DIR}/include)
 
 # Link OpenMP libraries
 if(OpenMP_CXX_FOUND)

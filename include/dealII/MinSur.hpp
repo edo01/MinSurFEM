@@ -24,6 +24,9 @@
 #include <deal.II/numerics/matrix_tools.h>
 #include <deal.II/numerics/vector_tools.h>
 
+#include <deal.II/grid/tria.h>
+
+
 #include <filesystem>
 #include <fstream>
 #include <iostream>

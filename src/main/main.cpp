@@ -1,5 +1,3 @@
-#include <deal.II/base/convergence_table.h>
-
 #include <fstream>
 #include <iostream>
 #include <vector>
@@ -11,10 +9,9 @@ int
 main(int /*argc*/, char * /*argv*/[])
 {
   const std::string mesh_file_name =
-    "../../mesh/mesh-square-h0.100000.msh";
-  const unsigned int r = 1;
+    "../mesh/mesh-square-h0.100000.msh";
 
-  MinSur problem(mesh_file_name, r);
+  MinSur problem(mesh_file_name);
 
   problem.setup();
   problem.assemble();

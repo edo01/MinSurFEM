@@ -1,4 +1,7 @@
-#include "MinSur.hpp"
+#include "dealII/MinSur.hpp"
+#include <filesystem>
+#include <fstream>
+#include <iostream>
 
 void
 MinSur::setup()
@@ -41,11 +44,6 @@ MinSur::setup()
 
     std::cout << "  Quadrature points per cell = " << quadrature->size()
               << std::endl;
-
-    quadrature_boundary = std::make_unique<QGaussSimplex<dim - 1>>(r + 1);
-
-    std::cout << "  Quadrature points per boundary cell = "
-              << quadrature_boundary->size() << std::endl;
   }
 
   std::cout << "-----------------------------------------------" << std::endl;
@@ -267,7 +265,7 @@ MinSur::solve_linear_system()
 }
 
 void
-HeatNonLinear::solve()
+MinSur::solve()
 {
   const unsigned int n_max_iters        = 1000;
   const double       residual_tolerance = 1e-6;
@@ -281,16 +279,16 @@ HeatNonLinear::solve()
   // Dirichlet boundary conditions.
   {
     // We extract the DoFs corresponding to the Dirichlet boundary conditions.
-    IndexSet dirichlet_dofs = DoFTools::extract_boundary_dofs(dof_handler);
+    //IndexSet dirichlet_dofs = DoFTools::extract_boundary_dofs(dof_handler);
     // We create a vector that stores the values of the Dirichlet boundary
-    Vector vector_dirichlet(solution);
+    //Vector vector_dirichlet(solution);
     // We interpolate the Dirichlet boundary function g on the entire domain.
-    VectorTools::interpolate(dof_handler, function_g, vector_dirichlet);
+    VectorTools::interpolate(dof_handler, function_g, solution);//vector_dirichlet);
 
     // differently from the assemble function, we apply the boundary conditions
     // only to the solution vector, not to the system matrix and right-hand side.
-    for (const auto &idx : dirichlet_dofs) // we iterate over the DoFs on the boundary
-      solution_owned[idx] = vector_dirichlet[idx];
+    //for (const auto &idx : dirichlet_dofs) // we iterate over the DoFs on the boundary
+    //  solution[idx] = vector_dirichlet[idx];
 
     // A GOOD STARTING POINT FOR THE NEWTON ITERATION MAY BE THE FUNCTION G
     // ITSELF, SO WE SET THE SOLUTION VECTOR TO THE INTERPOLATION OF G.
@@ -302,10 +300,10 @@ HeatNonLinear::solve()
 
   while (n_iter < n_max_iters && residual_norm > residual_tolerance)
     {
-      assemble_system();
+      assemble();
       residual_norm = residual_vector.l2_norm();
 
-      pcout << "  Newton iteration " << n_iter << "/" << n_max_iters
+      std::cout << "  Newton iteration " << n_iter << "/" << n_max_iters
             << " - ||r|| = " << std::scientific << std::setprecision(6)
             << residual_norm << std::flush;
 
@@ -316,7 +314,7 @@ HeatNonLinear::solve()
         }
       else
         {
-          pcout << " < tolerance" << std::endl;
+          std::cout << " < tolerance" << std::endl;
         }
 
       ++n_iter;
