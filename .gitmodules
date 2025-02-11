@@ -1,0 +1,3 @@
+[submodule "lib/FastFem"]
+	path = lib/FastFem
+	url = https://github.com/edo01/FastFem
