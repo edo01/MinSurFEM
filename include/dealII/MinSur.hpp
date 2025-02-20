@@ -146,7 +146,7 @@ protected:
   SparsityPattern sparsity_pattern;
 
   /* System matrix. */
-  SparseMatrix<double> jacobian_matrix;
+  SparseMatrix<double> stiffness_matrix;
 
   // System right-hand side.
   Vector<double> residual_vector;

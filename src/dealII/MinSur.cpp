@@ -84,7 +84,7 @@ MinSur::setup()
 
     // Then, we use the sparsity pattern to initialize the system matrix 
     std::cout << "  Initializing the system matrix" << std::endl;
-    jacobian_matrix.reinit(sparsity_pattern);
+    stiffness_matrix.reinit(sparsity_pattern);
 
     // Finally, we initialize the right-hand side and solution vectors.
     std::cout << "  Initializing the system right-hand side" << std::endl;
@@ -132,7 +132,7 @@ MinSur::assemble()
   std::vector<types::global_dof_index> dof_indices(dofs_per_cell);
 
   // Reset the global matrix and vector, just in case.
-  jacobian_matrix   = 0.0;
+  stiffness_matrix   = 0.0;
   residual_vector   = 0.0;
 
   // We will use this vector to store the values of the gradient of the
@@ -205,7 +205,7 @@ MinSur::assemble()
 
       // Then, we add the local matrix and vector into the corresponding
       // positions of the global matrix and vector.
-      jacobian_matrix.add(dof_indices, cell_matrix);
+      stiffness_matrix.add(dof_indices, cell_matrix);
       residual_vector.add(dof_indices, cell_residual);
     }
 
@@ -240,7 +240,7 @@ MinSur::assemble()
     // conditions. This replaces the equations for the boundary DoFs with
     // the corresponding u_i = 0 equations.
     MatrixTools::apply_boundary_values(
-      boundary_values, jacobian_matrix, delta, residual_vector, true);
+      boundary_values, stiffness_matrix, delta, residual_vector, true);
   }
 }
 
@@ -259,7 +259,7 @@ MinSur::solve_linear_system()
 
   std::cout << "  Solving the linear system" << std::endl;
   // We are not using any preconditioner, so we pass the identity matrix.
-  solver.solve(jacobian_matrix, delta, residual_vector, PreconditionIdentity());
+  solver.solve(stiffness_matrix, delta, residual_vector, PreconditionIdentity());
   std::cout << "  " << solver_control.last_step() << " CG iterations"
             << std::endl;
 }
