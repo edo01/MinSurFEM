@@ -1,25 +1,57 @@
-#include "FastFEM/MinSurFF.hpp"
+#include "FastFEM/MinSurFastFem.hpp"
 #include "FastFem/mesh/MeshMaker.hpp"
 #include "FastFem/linalg/iterativeSolvers/CGSolver.hpp"
 #include "FastFem/mesh/MeshIO.hpp"
 
-double distance(const mesh::Point<2> &v1, const mesh::Point<2> &v2)
+// Define global static std::function objects
+static const std::function<double(double, double)> g1 = [](double x, double y) { return x * x + y * y; };
+static const std::function<double(double, double)> g2 = [](double x, double y) { return std::sin(2.0 * M_PI * x); };
+static const std::function<double(double, double)> g3 = [](double x, double y) { return 1 - x * x - y * y; };
+static const std::function<double(double, double)> g4 = [](double x, double y) { 
+    if(x == -1 || x == 1)
+        return -1;
+    else return 1;
+};
+static const std::function<double(double, double)> g5 = [](double x, double y) { 
+    if(x == -1 || x == 1)
+        return y;
+    else return x;
+};
+
+int
+main(int argc, char *argv[])
+{
+
+  double newton_step = 1.3;
+
+  MinSurFastFem problem_ff(80, g2, newton_step);
+
+  problem_ff.setup();
+  problem_ff.assemble();
+  problem_ff.solve();
+  problem_ff.output();
+
+  return 0;
+}
+
+//utility functions used in assembly
+static double distance(const mesh::Point<2> &v1, const mesh::Point<2> &v2)
 {
     return std::sqrt((v2.coords[0] - v1.coords[0]) * (v2.coords[0] - v1.coords[0]) + (v2.coords[1] - v1.coords[1]) * (v2.coords[1] - v1.coords[1]));
 }
 
-double dot(const mesh::Point<2> &v1, const mesh::Point<2> &v2, const mesh::Point<2> &w1, const mesh::Point<2> &w2)
+static double dot(const mesh::Point<2> &v1, const mesh::Point<2> &v2, const mesh::Point<2> &w1, const mesh::Point<2> &w2)
 {
     return (v2.coords[0] - v1.coords[0]) * (w2.coords[0] - w1.coords[0]) + (v2.coords[1] - v1.coords[1]) * (w2.coords[1] - w1.coords[1]);
 }
 
-double dot(double x1, double y1, double x2, double y2)
+static double dot(double x1, double y1, double x2, double y2)
 {
     return x1 * x2 + y1 * y2;
 }
 
 void
-MinSurFF::setup()
+MinSurFastFem::setup()
 {
   std::cout << "===============================================" << std::endl;
 
@@ -91,7 +123,7 @@ MinSurFF::setup()
 }
 
 void
-MinSurFF::assemble()
+MinSurFastFem::assemble()
 {
   // Number of local DoFs for each element.
   const unsigned int dofs_per_element = fe->get_n_dofs_per_element();
@@ -217,7 +249,7 @@ MinSurFF::assemble()
 }
 
 void
-MinSurFF::solve()
+MinSurFastFem::solve()
 {
   const unsigned int n_max_iters        = 1000;
   const double       residual_tolerance = 1e-6;
@@ -246,7 +278,7 @@ MinSurFF::solve()
 
       std::cout << "  Newton iteration " << n_iter << "/" << n_max_iters
             << " - ||r|| = " << std::scientific << std::setprecision(6)
-            << residual_norm << std::flush;
+            << residual_norm;
 
       if (residual_norm > residual_tolerance)
         {
@@ -264,62 +296,39 @@ MinSurFF::solve()
 }
 
 void
-MinSurFF::solve_linear_system()
+MinSurFastFem::solve_linear_system()
 {
-  std::cout << "===============================================" << std::endl;
-
   // Here we specify the maximum number of iterations of the iterative solver,
   // and its tolerance.
 
   linalg::CGSolver cg_solver(1000, 1e-6 * residual_vector.norm());
 
-  std::cout << "  Solving the linear system" << std::endl;
+  std::cout << "\nSolving the linear system";
 
   delta = cg_solver.solve(stiffness_matrix, residual_vector);
+
+  std::cout << " - " << cg_solver.get_last_step() << " CG iterations"
+            << std::endl;
+
 }
 
 void
-MinSurFF::output()
+MinSurFastFem::output()
 {
   std::cout << "===============================================" << std::endl;
 
   // The DataOut class manages writing the results to a file.
   mesh::DataIO<dim, dim> data_out(mesh, dof_handler, solution);
 
-  // Add the function g to the output.
-    // linalg::MatrixTools::interpolate()
-//   VectorTools::interpolate(dof_handler, function_g, g_values);
-//   data_out.add_data_vector(dof_handler, g_values, "function_g");
-
-  const std::string           output_file_name = "output-MinSurFF.vtk";
+  const std::string           output_file_name = "output-MinSurFastFem.vtk";
   data_out.save_vtx(output_file_name);
   std::cout << "Output written to " << output_file_name << std::endl;
 
+  // We can also write the mesh to a file 
+  const std::string           mesh_file_name = "mesh-MinSurFastFem.msh";
+  mesh::MeshIO<dim, dim> mesh_io(mesh);
+  mesh_io.save_msh(mesh_file_name);
+  std::cout << "Mesh written to " << mesh_file_name << std::endl;
+
   std::cout << "===============================================" << std::endl;
-}
-
-int main()
-{
-
-    std::function<double(double, double)> g = [](double x, double y) { return x * x + y * y; };
-    // std::function<double(double, double)> g = [](double x, double y) { return std::sin(2.0 * M_PI * x); };
-    // std::function<double(double, double)> g = [](double x, double y) { return 1 - x * x - y * y; };
-    // std::function<double(double, double)> g = [](double x, double y) { 
-    //     if(x == -1 || x == 1)
-    //         return -1;
-    //     else return 1;
-    //  };
-    // std::function<double(double, double)> g = [](double x, double y) { 
-    //     if(x == -1 || x == 1)
-    //         return y;
-    //     else return x;
-    // };
-
-    MinSurFF problem_ff(100, g, 1.3);
-
-    problem_ff.setup();
-    problem_ff.assemble();
-    problem_ff.solve();
-    problem_ff.output();
-
 }

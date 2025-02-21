@@ -1,5 +1,5 @@
-#ifndef MINSUR_HPP
-#define MINSUR_HPP
+#ifndef MINSUR_DEALII_HPP
+#define MINSUR_DEALII_HPP
 
 #include <deal.II/base/quadrature_lib.h>
 
@@ -35,7 +35,7 @@ using namespace dealii;
 /**
  * Class managing the differential problem.
  */
-class MinSur
+class MinSurDealII
 {
 public:
   // Physical dimension (1D, 2D, 3D)
@@ -57,14 +57,14 @@ public:
 
     // Evaluation.
     virtual double
-    value(const Point<dim> &p, const unsigned int /*component*/ = 0) const
+    value(const Point<dim> &p, const unsigned int /*component*/ = 0) const override
     {
       return sin(2.0 * numbers::PI * p[0]);;
     }
   };
 
   // Constructor.
-  MinSur(const std::string &mesh_file_name_)
+  MinSurDealII(const std::string &mesh_file_name_)
     : mesh_file_name(mesh_file_name_)
   {}
 
@@ -157,4 +157,4 @@ protected:
   Vector<double> delta;
 };
 
-#endif
+#endif // MINSUR_DEALII_HPP

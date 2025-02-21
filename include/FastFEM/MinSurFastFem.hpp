@@ -1,5 +1,5 @@
-#ifndef MINSURFF_HPP
-#define MINSURFF_HPP
+#ifndef MINSURFASTFEM_HPP
+#define MINSURFASTFEM_HPP
 
 #include <iomanip>
 #include <functional>
@@ -14,18 +14,18 @@ using namespace fastfem;
 /**
  * Class managing the differential problem.
  */
-class MinSurFF
+class MinSurFastFem
 {
 public:
   // Physical dimension (1D, 2D, 3D)
   static constexpr unsigned int dim = 2;
 
   // Constructor.
-  MinSurFF(unsigned n_vertices, std::function<double(double, double)> g, double newton_step = 1.0)
+  MinSurFastFem(unsigned n_vertices, std::function<double(double, double)> g, double newton_step = 1.0)
     : n_vertices(n_vertices), function_g(g), newton_step(newton_step)
   {
     if(newton_step <= 0)
-      throw std::runtime_error("MinSurFF(): newton_step must be positive.");
+      throw std::runtime_error("MinSurFastFem(): newton_step must be positive.");
   }
 
   // Initialization.
@@ -82,4 +82,4 @@ protected:
   double newton_step;
 };
 
-#endif // MINSURFF_HPP
+#endif // MINSURFASTFEM_HPP

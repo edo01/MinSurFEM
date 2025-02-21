@@ -1,10 +1,25 @@
-#include "dealII/MinSur.hpp"
+#include "dealII/MinSurDealII.hpp"
 #include <filesystem>
 #include <fstream>
 #include <iostream>
 
+int
+main(int argc, char *argv[])
+{
+  const std::string default_mesh_file_name = "../mesh/mesh-square-h0.012500.msh";
+  const std::string mesh_file_name = (argc > 1) ? argv[1] : default_mesh_file_name;
+
+  MinSurDealII problem(mesh_file_name);
+
+  problem.setup();
+  problem.assemble();
+  problem.solve();
+  problem.output();
+}
+
+
 void
-MinSur::setup()
+MinSurDealII::setup()
 {
   std::cout << "===============================================" << std::endl;
 
@@ -97,7 +112,7 @@ MinSur::setup()
 }
 
 void
-MinSur::assemble()
+MinSurDealII::assemble()
 {
   // Number of local DoFs for each element.
   const unsigned int dofs_per_cell = fe->dofs_per_cell;
@@ -245,10 +260,8 @@ MinSur::assemble()
 }
 
 void
-MinSur::solve_linear_system()
+MinSurDealII::solve_linear_system()
 {
-  std::cout << "===============================================" << std::endl;
-
   // Here we specify the maximum number of iterations of the iterative solver,
   // and its tolerance.
   SolverControl solver_control(1000, 1e-6 * residual_vector.l2_norm());
@@ -257,15 +270,15 @@ MinSur::solve_linear_system()
   // system using the conjugate gradient method.
   SolverCG<Vector<double>> solver(solver_control);
 
-  std::cout << "  Solving the linear system" << std::endl;
+  std::cout << "\nSolving the linear system";
   // We are not using any preconditioner, so we pass the identity matrix.
   solver.solve(stiffness_matrix, delta, residual_vector, PreconditionIdentity());
-  std::cout << "  " << solver_control.last_step() << " CG iterations"
+  std::cout << " - " << solver_control.last_step() << " CG iterations"
             << std::endl;
 }
 
 void
-MinSur::solve()
+MinSurDealII::solve()
 {
   const unsigned int n_max_iters        = 1000;
   const double       residual_tolerance = 1e-6;
@@ -322,7 +335,7 @@ MinSur::solve()
 }
 
 void
-MinSur::output() const
+MinSurDealII::output() const
 {
   std::cout << "===============================================" << std::endl;
 
@@ -346,8 +359,7 @@ MinSur::output() const
   // Then, use one of the many write_* methods to write the file in an
   // appropriate format.
   const std::filesystem::path mesh_path(mesh_file_name);
-  const std::string           output_file_name =
-    "output-" + mesh_path.stem().string() + ".vtk";
+  const std::string           output_file_name = "output-MinSurDealII.vtk";
   std::ofstream output_file(output_file_name);
   data_out.write_vtk(output_file);
 
