@@ -26,7 +26,6 @@
 
 #include <deal.II/grid/tria.h>
 
-
 #include <filesystem>
 #include <fstream>
 #include <iostream>

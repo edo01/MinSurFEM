@@ -19,5 +19,7 @@ main(int argc, char *argv[])
   problem.solve();
   problem.output();
 
+//   MinSurFF problem_ff(10);
+
   return 0;
 }

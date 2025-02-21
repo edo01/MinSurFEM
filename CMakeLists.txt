@@ -41,6 +41,6 @@ set(CMAKE_CXX_COMPILER "${MPI_CXX_COMPILER}")
 ##########################
 # Include subdirectories #
 ##########################
-#add_subdirectory(src/fastFEM)
+add_subdirectory(src/fastFEM)
 add_subdirectory(src/dealII)
 add_subdirectory(src/main)
