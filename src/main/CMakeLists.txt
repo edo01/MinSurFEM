@@ -1,3 +1,8 @@
-add_executable(minsur main.cpp)
-target_link_libraries(minsur PRIVATE MinSurDealII) #MinSurFastFEM
-target_include_directories(minsur PRIVATE ${CMAKE_SOURCE_DIR}/include)
+# Add sources
+file(GLOB_RECURSE SOURCES "*.cpp")
+
+# Create the main executable
+add_executable(main ${SOURCES})
+
+# Link against the libraries
+target_link_libraries(main PRIVATE MinSurDealII MinSurFastFEM)

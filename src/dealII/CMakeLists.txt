@@ -14,7 +14,6 @@ find_package(deal.II 9.3.1 REQUIRED
   HINTS ${DEAL_II_DIR} $ENV{DEAL_II_DIR} $ENV{mkDealiiPrefix})
 deal_ii_initialize_cached_variables()
 
-
 # add sources to the library
 add_library(MinSurDealII ${SOURCES})
 target_include_directories(MinSurDealII PRIVATE ${CMAKE_SOURCE_DIR}/include)
