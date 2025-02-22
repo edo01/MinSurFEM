@@ -82,7 +82,7 @@ Here $\phi_i$ are the basis functions of $V_h$ and $c_n = \dfrac{1}{\sqrt{1 + |\
 
 ## Results
 
-We compare the performance of the two implementations by solving the minimal surface problem on a square domain with boundary conditions obtained from the function $g(x, y) = sin(2.0 * \pi * x)$ on the boundary. The domain is discretized using 12800 elements, for a total of 6561 degrees of freedom. 
+We compare the performance of the two implementations by solving the minimal surface problem on a square domain with boundary conditions obtained from the function $g(x, y) = sin(2 \pi x)$ on the boundary. The domain is discretized using 12800 elements, for a total of 6561 degrees of freedom. 
 
 **FASTFEM**
 ``` bash
