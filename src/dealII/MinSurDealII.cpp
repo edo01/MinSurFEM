@@ -2,6 +2,7 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+#include <chrono>
 
 int
 main(int argc, char *argv[])
@@ -11,10 +12,36 @@ main(int argc, char *argv[])
 
   MinSurDealII problem(mesh_file_name);
 
-  problem.setup();
-  problem.assemble();
-  problem.solve();
-  problem.output();
+    auto start = std::chrono::high_resolution_clock::now();
+    problem.setup();
+    auto end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> setup_time = end - start;
+
+    start = std::chrono::high_resolution_clock::now();
+    problem.assemble();
+    end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> assemble_time = end - start;
+
+    start = std::chrono::high_resolution_clock::now();
+    problem.solve();
+    end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> solve_time = end - start;
+
+    start = std::chrono::high_resolution_clock::now();
+    problem.output();
+    end = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double> output_time = end - start;
+
+
+    std::cout << "===============================================" << std::endl;
+    std::cout << "Summary:" << std::endl;
+    std::cout << "Setup time: " << setup_time.count() << " seconds" << std::endl;
+    std::cout << "Assemble time: " << assemble_time.count() << " seconds" << std::endl;
+    std::cout << "Solve time: " << solve_time.count() << " seconds" << std::endl;
+    std::cout << "Output time: " << output_time.count() << " seconds" << std::endl;
+    std::cout << "Total time: " << (setup_time.count() + assemble_time.count() + solve_time.count() + output_time.count()) << " seconds" << std::endl;
+    std::cout << "===============================================" << std::endl;
+  
 }
 
 

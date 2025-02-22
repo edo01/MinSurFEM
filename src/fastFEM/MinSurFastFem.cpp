@@ -2,6 +2,7 @@
 #include "FastFem/mesh/MeshMaker.hpp"
 #include "FastFem/linalg/iterativeSolvers/CGSolver.hpp"
 #include "FastFem/mesh/MeshIO.hpp"
+#include <chrono>
 
 // Define global static std::function objects
 static const std::function<double(double, double)> g1 = [](double x, double y) { return x * x + y * y; };
@@ -26,10 +27,38 @@ main(int argc, char *argv[])
 
   MinSurFastFem problem_ff(80, g2, newton_step);
 
+  auto start = std::chrono::high_resolution_clock::now();
   problem_ff.setup();
+  auto end = std::chrono::high_resolution_clock::now();
+  std::chrono::duration<double> elapsed = end - start;
+  double setup_time = elapsed.count();
+
+  start = std::chrono::high_resolution_clock::now();
   problem_ff.assemble();
+  end = std::chrono::high_resolution_clock::now();
+  elapsed = end - start;
+  double assemble_time = elapsed.count();
+
+  start = std::chrono::high_resolution_clock::now();
   problem_ff.solve();
+  end = std::chrono::high_resolution_clock::now();
+  elapsed = end - start;
+  double solve_time = elapsed.count();
+
+  start = std::chrono::high_resolution_clock::now();
   problem_ff.output();
+  end = std::chrono::high_resolution_clock::now();
+  elapsed = end - start;
+  double output_time = elapsed.count();
+
+  std::cout << "===============================================" << std::endl;
+  std::cout << "Summary:" << std::endl;
+  std::cout << "Setup time: " << setup_time << " seconds" << std::endl;
+  std::cout << "Assemble time: " << assemble_time << " seconds" << std::endl;
+  std::cout << "Solve time: " << solve_time << " seconds" << std::endl;
+  std::cout << "Output time: " << output_time << " seconds" << std::endl;
+  std::cout << "Total time: " << (setup_time + assemble_time + solve_time + output_time) << " seconds" << std::endl;
+  std::cout << "===============================================" << std::endl;
 
   return 0;
 }

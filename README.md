@@ -80,3 +80,26 @@ $\mathbf{A^k_{ij}}=\int_{\Omega} c_n \nabla \phi_i \cdot \nabla \phi_j - c_n^3(\
 
 Here $\phi_i$ are the basis functions of $V_h$ and $c_n = \dfrac{1}{\sqrt{1 + |\nabla u^k|^2}}$. Since the matrix can be proven to be symmetric and positive definite, we will use the conjugate gradient method to solve the linear system at each iteration.
 
+## Results
+
+We compare the performance of the two implementations by solving the minimal surface problem on a square domain with boundary conditions obtained from the function $g(x, y) = sin(2.0 * \pi * x)$ on the boundary. The domain is discretized using 12800 elements, for a total of 6561 degrees of freedom. 
+
+**FASTFEM**
+``` bash
+Summary:
+Setup time: 5.22e-03 seconds
+Assemble time: 2.57e-03 seconds
+Solve time: 5.22 seconds
+Output time: 1.04e-02 seconds
+Total time: 5.238 seconds
+```
+
+**DEALII**
+``` bash
+Summary:
+Setup time: 3.25e-02 seconds
+Assemble time: 1.38e-02 seconds
+Solve time: 3.86 seconds
+Output time: 3.18e-02 seconds
+Total time: 3.942 seconds
+```
